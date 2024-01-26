@@ -1,0 +1,505 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "AppConfig",
+  "type": "object",
+  "description": "Advanced options to configure a Client.",
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "type": [
+        "null",
+        "string"
+      ],
+      "description": "JSONSchema for this file, used for external users to validate and test this file."
+    },
+    "unsafeModeWhiteList": {
+      "type": [
+        "array",
+        "null"
+      ],
+      "description": "A list of World URLs which can be opened in Unsafe mode with the \"OpenUnsafe\" command line argument",
+      "items": {
+        "type": "string"
+      }
+    },
+    "inputs": {
+      "description": "Configuration options for the controllers of this App Client.\nThis will later be moved into in-game settings, as it doesn't make sanse as per-build configuration.",
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "#/definitions/InputConfig"
+        }
+      ]
+    },
+    "universeId": {
+      "type": [
+        "null",
+        "string"
+      ],
+      "description": "Optionally, specifies which universe this Headless Server will be in."
+    },
+    "proxy": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "#/definitions/ProxyConfig"
+        }
+      ]
+    },
+    "autoStartWorlds": {
+      "type": [
+        "array",
+        "null"
+      ],
+      "description": "A list of worlds/sessions to start/create when this App Client Starts.",
+      "items": {
+        "$ref": "#/definitions/WorldStartupParameters"
+      }
+    },
+    "autoJoinSessions": {
+      "type": [
+        "array",
+        "null"
+      ],
+      "description": "A list of rules/ids/urls to use to automatically join sessions when this client starts.",
+      "items": {
+        "$ref": "#/definitions/SessionJoinParameters"
+      }
+    },
+    "noUI": {
+      "type": "boolean",
+      "description": "When true, will hide most standard UI from the user."
+    },
+    "disableDesktop": {
+      "type": "boolean",
+      "description": "Disables, the Desktop viewing functionality. Does not disable Desktop Input/Desktop Mode."
+    },
+    "pathWhitelist": {
+      "type": [
+        "array",
+        "null"
+      ],
+      "description": "A list of paths which the App can browse in the FileBrowser. Set to an empty array to disable the FileBrowser.",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "definitions": {
+    "InputConfig": {
+      "type": "object",
+      "description": "Configuration options for a Client's input devices.",
+      "additionalProperties": false,
+      "properties": {
+        "triggerDeadZone": {
+          "type": "number",
+          "description": "Adds a deadzone to the triggers of all controllers used by this client.",
+          "format": "float"
+        },
+        "axisDeadZone": {
+          "type": "number",
+          "description": "Adds a deadzone to the joysticks of all controllers used by this client.",
+          "format": "float"
+        }
+      }
+    },
+    "ProxyConfig": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "autoDetect": {
+          "type": "boolean",
+          "description": "Whether to autodetect proxy settings using Internet Explorer's settings.  Defaults to false."
+        },
+        "localBypass": {
+          "type": "boolean",
+          "description": "Whether to bypass the proxy on local domains.  Defaults to true."
+        },
+        "bypassDomains": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "List of domains to bypass the proxy with.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "address": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "HTTP/S proxy to use for all web requests."
+        },
+        "credentialStore": {
+          "description": "Determines the source of the proxy server's credentials.\nValid options are:\nDefaultSystemCache\nNetworkCache\nUsernamePassword\nDefaults to the system cache.",
+          "oneOf": [
+            {
+              "$ref": "#/definitions/CredentialType"
+            }
+          ]
+        },
+        "username": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "Proxy server's username."
+        },
+        "password": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "Proxy server's password."
+        }
+      }
+    },
+    "CredentialType": {
+      "type": "string",
+      "description": "",
+      "x-enumNames": [
+        "DefaultSystemCache",
+        "NetworkCache",
+        "UsernamePassword"
+      ],
+      "enum": [
+        "DefaultSystemCache",
+        "NetworkCache",
+        "UsernamePassword"
+      ]
+    },
+    "WorldStartupParameters": {
+      "type": "object",
+      "description": "These options are used to configure a startup world from a JSON configuration file.",
+      "additionalProperties": false,
+      "properties": {
+        "isEnabled": {
+          "type": "boolean",
+          "description": "When set to false, this will disable this world entry from starting."
+        },
+        "sessionName": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "The name of the session as shown in the World/Session Browser"
+        },
+        "customSessionId": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "An optional custom session id for this session.",
+          "x-example": "U-ProbablePrime:Cheese-Land"
+        },
+        "description": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "An optional description of this session, displayed within the world/session browser."
+        },
+        "maxUsers": {
+          "type": "integer",
+          "description": "The maximum number of users, allowed to join this session.",
+          "format": "int32",
+          "default": 32
+        },
+        "accessLevel": {
+          "description": "The Access Level for this session please see SessionAccessLevel for more information.",
+          "oneOf": [
+            {
+              "$ref": "#/definitions/SessionAccessLevel"
+            }
+          ]
+        },
+        "useCustomJoinVerifier": {
+          "type": "boolean",
+          "description": "Determines whether custom join verifier should be enabled in this session"
+        },
+        "hideFromPublicListing": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "Determines if this session should be hidden from the world/session browser or not."
+        },
+        "tags": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "A list of tags, to assist with searching or discovering sessions. ",
+          "x-example": "cheese,world,game",
+          "items": {
+            "type": "string"
+          }
+        },
+        "mobileFriendly": {
+          "type": "boolean",
+          "description": "Determines if this session is friendly for mobile/quest users."
+        },
+        "loadWorldURL": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "When provided with a world URL this will load this world for the session."
+        },
+        "loadWorldPresetName": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "When provided and valid, this will load the specified world preset into the session."
+        },
+        "overrideCorrespondingWorldId": {
+          "description": "Overrides the world id for this session allowing it to be grouped and displayed with other sessions with this world id.",
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/RecordId"
+            }
+          ]
+        },
+        "forcePort": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Optional, If specified it will force this session to run on a specific network port."
+        },
+        "keepOriginalRoles": {
+          "type": "boolean",
+          "description": "Optional, If specified will keep the original roles as saved in the world."
+        },
+        "defaultUserRoles": {
+          "type": [
+            "null",
+            "object"
+          ],
+          "description": "When provided with a list of username and permission pairs it will grant those users the listed permissions when they join.",
+          "x-example": "...\n\"defaultUserRoles\":[\n    {\n        \"User\": \"Admin\"\n    }\n]\n...\n\n            ",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "roleCloudVariable": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "An optional name of a cloud variable to use to determine the role of this user. \nSee our wiki article for more information."
+        },
+        "allowUserCloudVariable": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "An optional name of a cloud variable to use to determine if this user is allowed in the session. \nSee our wiki article for more information."
+        },
+        "denyUserCloudVariable": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "An optional name of a cloud variable to use to determine if this user is denied access to the session. \nSee our wiki article for more information."
+        },
+        "requiredUserJoinCloudVariable": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "An optional name of a cloud variable to use to determine if this user is denied access to the session. \nSee our wiki article for more information."
+        },
+        "requiredUserJoinCloudVariableDenyMessage": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "The name of a cloud variable whose value will be used, When a user is denied access by RequiredUserJoinCloudVariable this message will be displayed to them if present.\nSee our wiki article for more information."
+        },
+        "awayKickMinutes": {
+          "type": "number",
+          "description": "Configures the number of minutes that a user can be away(shelled out) from a world before they are kicked. Setting this to -1 disables this option.",
+          "format": "double"
+        },
+        "parentSessionIds": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "Provides a list of Parent Session Ids for this session. See our wiki for more info.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "autoInviteUsernames": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "Users within this list will automatically be invited to this world when it starts.",
+          "x-example": "...\n\"autoInviteUsernames\": [\n]\n...",
+          "items": {
+            "type": "string"
+          }
+        },
+        "autoInviteMessage": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "An automatic message sent to the users on the AutoInviteUsernames list along with their invite."
+        },
+        "saveAsOwner": {
+          "description": "Controls who saves this world when it is saved. See, SaveAsOwner for more information.",
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/SaveAsOwner"
+            }
+          ]
+        },
+        "autoRecover": {
+          "type": "boolean",
+          "description": "Headless only"
+        },
+        "idleRestartInterval": {
+          "type": "number",
+          "description": "If this is set(>0) and the world is empty, it will restart regularly using the value to determine the number of seconds between restarts.\nHeadless only",
+          "format": "double"
+        },
+        "forcedRestartInterval": {
+          "type": "number",
+          "description": "If this is set(>0), it will restart regularly using the value to determine the number of seconds between restarts.\nHeadless only",
+          "format": "double"
+        },
+        "saveOnExit": {
+          "type": "boolean",
+          "description": "If set to true will save this world on exit."
+        },
+        "autosaveInterval": {
+          "type": "number",
+          "description": "If this is set(>0), it will automatically save using the value to determine the number of seconds between saves.\nHeadless only",
+          "format": "double"
+        },
+        "autoSleep": {
+          "type": "boolean",
+          "description": "If set to true, will prevent an empty(or filled with away users) world from running a full update cycle regularily.\nHeadless only"
+        }
+      }
+    },
+    "SessionAccessLevel": {
+      "type": "string",
+      "description": "Used to determine the session access level for a session.",
+      "x-enumNames": [
+        "Private",
+        "LAN",
+        "Contacts",
+        "Friends",
+        "ContactsPlus",
+        "FriendsOfFriends",
+        "RegisteredUsers",
+        "Anyone"
+      ],
+      "enum": [
+        "Private",
+        "LAN",
+        "Contacts",
+        "Contacts",
+        "ContactsPlus",
+        "ContactsPlus",
+        "RegisteredUsers",
+        "Anyone"
+      ]
+    },
+    "RecordId": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "recordId": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "ownerId": {
+          "type": [
+            "null",
+            "string"
+          ]
+        }
+      }
+    },
+    "SaveAsOwner": {
+      "type": "string",
+      "description": "",
+      "x-enumNames": [
+        "LocalMachine",
+        "CloudUser"
+      ],
+      "enum": [
+        "LocalMachine",
+        "CloudUser"
+      ]
+    },
+    "SessionJoinParameters": {
+      "type": "object",
+      "description": "Configuration for a session which should be automatically joined by this client.",
+      "additionalProperties": false,
+      "properties": {
+        "url": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "A direct session URL to join. When specified all other checks will be ignored.",
+          "format": "uri",
+          "x-example": {
+            "url": "ever-session:///S-U-ProbablePrime:CheeseLand"
+          }
+        },
+        "sessionId": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "A session ID to join, use \"*\" to use the other rules to find a session to join.",
+          "x-example": {
+            "sessionId": "S-U-ProbablePrime:CheeseLand"
+          }
+        },
+        "lanOnly": {
+          "type": "boolean",
+          "description": "When set to true, will only join LAN sessions."
+        },
+        "headlessOnly": {
+          "type": "boolean",
+          "description": "When set to true, will only join Headless sessions."
+        },
+        "onlyUniverseId": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "When set, will only join sessions within this Universe."
+        },
+        "autoFocus": {
+          "type": "boolean",
+          "description": "When set to true, it will automatically focus this session if it is found."
+        }
+      }
+    }
+  }
+}
