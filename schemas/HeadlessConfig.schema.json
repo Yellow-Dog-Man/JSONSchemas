@@ -337,10 +337,10 @@
       "enum": [
         "Private",
         "LAN",
-        "Friends",
-        "Friends",
-        "FriendsOfFriends",
-        "FriendsOfFriends",
+        "Contacts",
+        "Contacts",
+        "ContactsPlus",
+        "ContactsPlus",
         "RegisteredUsers",
         "Anyone"
       ]
