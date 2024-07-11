@@ -40,7 +40,16 @@
       ],
       "description": "Optionally, specifies which universe this Headless Server will be in."
     },
+    "nodePreference": {
+      "description": "Optionally, specifies the relay connection preference.",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/NetworkNodePreference"
+        }
+      ]
+    },
     "proxy": {
+      "description": "Specifies proxy settings to be utilized.",
       "oneOf": [
         {
           "type": "null"
@@ -49,6 +58,25 @@
           "$ref": "#/definitions/ProxyConfig"
         }
       ]
+    },
+    "announceLocalIPs": {
+      "type": [
+        "boolean",
+        "null"
+      ],
+      "description": "Can override whether all local IPs are announced as part of session data or not. Announcing all local IP's\nis particularly helpful for larger corporate/university networks with flat hierarchy. On those networks the\nLAN broadcast might not reach the entire network, therefore local IP's won't be discovered by all clients.\nIf the client simply includes all the known IP's with the session data, this allows direct connections within\nthe network, which helps improve connectivity.\n            \nBy default, this is implicitly enabled when UniverseId is set - this is used as an indicator that Resonite is being\nused within some kind of organization. By explicitly setting this to false, this behavior can be disabled.\n            \nAlternatively this can also be set to true when there's no UniverseId, which will enable this behavior."
+    },
+    "disableAnnounceOnLAN": {
+      "type": "boolean",
+      "description": "This allows overriding whether any hosted sessions will be broadcasted on the LAN via UDP broadcast.\nLAN broadcasting allows clients on the same network to discover local sessions and connected to them,\nwithout requiring to go through other mechanisms. However on some networks this might cause a lot of\nnetwork noise, so this can be used to disable this.\nThis setting will override all other settings - e.g. user settings."
+    },
+    "disableIntroTutorial": {
+      "type": "boolean",
+      "description": "When set to true, the intro tutorial sequence will always be skipped. This skips the initial setup as well\nas the tutorial world that user has to go through on the first launch. This setting will override all other\nconditions and ensure that the tutorial is always skipped."
+    },
+    "disableCloudHomeAutoLoad": {
+      "type": "boolean",
+      "description": "When set to true, the cloud home will never be automatically loaded after logging in. This overrides any other\nsettings and can be used to ensure that this client will never load the cloud home on its own."
     },
     "autoStartWorlds": {
       "type": [
@@ -87,6 +115,16 @@
       "items": {
         "type": "string"
       }
+    },
+    "lnlConfig": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "#/definitions/LNLConfig"
+        }
+      ]
     }
   },
   "definitions": {
@@ -106,6 +144,20 @@
           "format": "float"
         }
       }
+    },
+    "NetworkNodePreference": {
+      "type": "string",
+      "description": "",
+      "x-enumNames": [
+        "Any",
+        "UniversePreferred",
+        "UniverseOnly"
+      ],
+      "enum": [
+        "Any",
+        "UniversePreferred",
+        "UniverseOnly"
+      ]
     },
     "ProxyConfig": {
       "type": "object",
@@ -134,7 +186,8 @@
             "null",
             "string"
           ],
-          "description": "HTTP/S proxy to use for all web requests."
+          "description": "HTTP/S proxy to use for all web requests.",
+          "format": "uri"
         },
         "credentialStore": {
           "description": "Determines the source of the proxy server's credentials.\nValid options are:\nDefaultSystemCache\nNetworkCache\nUsernamePassword\nDefaults to the system cache.",
@@ -149,14 +202,14 @@
             "null",
             "string"
           ],
-          "description": "Proxy server's username."
+          "description": "Proxy server's username. Only used with UsernamePassword credential stores."
         },
         "password": {
           "type": [
             "null",
             "string"
           ],
-          "description": "Proxy server's password."
+          "description": "Proxy server's password. Only used with UsernamePassword credential stores."
         }
       }
     },
@@ -166,11 +219,13 @@
       "x-enumNames": [
         "DefaultSystemCache",
         "NetworkCache",
+        "Kerberos",
         "UsernamePassword"
       ],
       "enum": [
         "DefaultSystemCache",
         "NetworkCache",
+        "Kerberos",
         "UsernamePassword"
       ]
     },
@@ -498,6 +553,41 @@
         "autoFocus": {
           "type": "boolean",
           "description": "When set to true, it will automatically focus this session if it is found."
+        }
+      }
+    },
+    "LNLConfig": {
+      "type": "object",
+      "description": "LNL Specific Configuration for this copy of Resonite",
+      "additionalProperties": false,
+      "properties": {
+        "ports": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/PortRange"
+            }
+          ]
+        }
+      }
+    },
+    "PortRange": {
+      "type": "object",
+      "description": "Port Range represents a list of ports available to use for networking. It can be used to restrict the port usage of an application.",
+      "x-example": "OnStartup:\nvar success = _portRange.Try((int port) => _client.Start(port));\nif (!success) {\nthrow new Exception(\"Failed to start LNL_Connection: Please check that the system has a port available. We're using: \" + _portRange);\n}\n\nOnStop:\nrange.Free(port);",
+      "additionalProperties": false,
+      "properties": {
+        "max": {
+          "type": "integer",
+          "description": "Maximum value for this range",
+          "format": "int32"
+        },
+        "min": {
+          "type": "integer",
+          "description": "Minimum value for this range",
+          "format": "int32"
         }
       }
     }
