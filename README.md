@@ -1,6 +1,6 @@
 # JSONSchemas
 
-Public repository of Resonite JSON schemas.
+Public repository of Resonite JSON schemas that are **automatically generated** from Resonite's Source
 
 ## What are JSON Schemas?
 
@@ -26,3 +26,8 @@ Head to the official [JSON Schema website](https://json-schema.org/)!
 ## Why are you using draft-04 schemas?
 
 Our [JSON Schema generator](https://github.com/RicoSuter/NJsonSchema) only supports [draft-04](https://github.com/RicoSuter/NJsonSchema/issues/574) right now. Please help it reach 06/07 support :)
+
+## Contributing
+We accept PRs to the Readme, and issues describing problems with the schemas.
+
+We do not accept PRs to the Schemas, these schemas are automatically generated from Resonite Source. If you notice an error in one, open an issue and we'll endeavor to fix the problem at the source.
