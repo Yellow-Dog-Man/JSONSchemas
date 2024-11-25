@@ -1,0 +1,33 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+	<Nullable>enable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Humanizer.Core" Version="3.0.0-beta.54" />
+    <PackageReference Include="Json.More.Net" Version="2.0.2" />
+    <PackageReference Include="JsonPointer.Net" Version="5.0.2" />
+    <PackageReference Include="JsonSchema.Net" Version="7.2.3" />
+    <PackageReference Include="JsonSchema.Net.Generation" Version="4.5.1" />
+    <PackageReference Include="JsonSchema.Net.Generation.DataAnnotations" Version="1.1.0" />
+    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="9.0.0" />
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    <PackageReference Include="Namotion.Reflection" Version="3.2.0" />
+    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.1.0" />
+    <PackageReference Include="System.Text.Encodings.Web" Version="9.0.0" />
+    <PackageReference Include="System.Text.Json" Version="9.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="FrooxEngine">
+      <HintPath>..\..\..\FrooxEngine\FrooxEngine\bin\Release\net462\FrooxEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="Resonite">
+      <HintPath>..\..\..\FrooxEngine\Headless\bin\Release\net8.0\Resonite.dll</HintPath>
+    </Reference>
+    <Reference Include="SkyFrost.Base.Models">
+      <HintPath>..\..\..\FrooxEngine\SkyFrost.Base.Models\bin\Release\net462\SkyFrost.Base.Models.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+</Project>
