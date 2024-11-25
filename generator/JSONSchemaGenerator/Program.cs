@@ -16,9 +16,9 @@ namespace JSONSchemaGenerator
         private static void Main(String[] args)
         {
             // Up 4
-            String projectDirectory = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, "..", "..", "..", ".."));;
+            String projectDirectory = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, "..", "..", "..", "..", ".."));;
 
-            String outputPath = Path.Combine(projectDirectory, "output");
+            String outputPath = Path.Combine(projectDirectory, "schemas");
             Directory.CreateDirectory(outputPath);
 
             GenerateNJsonSchemas(outputPath);
