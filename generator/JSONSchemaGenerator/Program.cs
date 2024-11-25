@@ -5,18 +5,22 @@ using NJsonSchema.Generation;
 using SkyFrost.Base;
 using System;
 using System.IO;
+using System.Reflection;
 using System.Text.Json;
 
 namespace JSONSchemaGenerator
 {
-    internal class Program
+    public class Program
     {
+        public static Type[] TypesToGenerate = { typeof(AppConfig), typeof(HeadlessConfig) };
         private static void Main(String[] args)
         {
-            String projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.FullName;
+            // Up 4
+            String projectDirectory = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, "..", "..", "..", ".."));;
 
             String outputPath = Path.Combine(projectDirectory, "output");
-            _=Directory.CreateDirectory(outputPath);
+            Directory.CreateDirectory(outputPath);
+
             GenerateNJsonSchemas(outputPath);
 
             GeneratJsonSchemaNet(outputPath);
@@ -24,28 +28,35 @@ namespace JSONSchemaGenerator
 
         private static void GeneratJsonSchemaNet(String outputPath)
         {
-            JsonSchemaBuilder builder = new JsonSchemaBuilder();
-            _ = new SchemaGeneratorConfiguration();
+            var config = new SchemaGeneratorConfiguration();
+            
 
-            // Get XML file from The Assemblies we need.
-
-            // MyModel is any type from the assembly.  A single registration will
-            // cover the entire assembly.
-            // https://docs.json-everything.net/schema/schemagen/schema-generation/#xml-comment-support
-            //config.RegisterXmlCommentFile<AppConfig>("MyAssembly.xml");
-
-            JsonSchema schema = builder.FromType<AppConfig>().Build();
             JsonSerializerOptions jsonSerializerConfig = new JsonSerializerOptions
             {
                 WriteIndented = true
             };
 
-            File.WriteAllText($"{outputPath}/AppConfig.new.schema.json", JsonSerializer.Serialize(schema, jsonSerializerConfig));
+            foreach (Type type in TypesToGenerate)
+            {
+                // https://localcoder.net/how-to-call-a-generic-method-using-a-type-variable-in-c
+                // Although this website looks like it just copies answers from Stack Overflow *shrugs*
+                MethodInfo genericMethod = typeof(Program).GetMethod(GenerateSchemaForName);
+                MethodInfo constructedMethod = genericMethod.MakeGenericMethod(type);
+                var schema = constructedMethod.Invoke(null, [jsonSerializerConfig, config]);
+
+                File.WriteAllText($"{outputPath}/{type.Name}.schema.json", JsonSerializer.Serialize(schema, jsonSerializerConfig));
+            }
+        }
+
+        public const string GenerateSchemaForName = "GenerateSchemaFor";
+        public static JsonSchema GenerateSchemaFor<T>(JsonSerializerOptions serializerOptions, SchemaGeneratorConfiguration schemaGeneratiorConfig) {
+            JsonSchemaBuilder builder = new JsonSchemaBuilder();
+            schemaGeneratiorConfig.RegisterXmlCommentFile<T>();
+            return builder.FromType<T>(schemaGeneratiorConfig).Build();
         }
 
         private static void GenerateNJsonSchemas(String outputPath)
         {
-            Type[] systemJsonTypes = { typeof(AppConfig), typeof(HeadlessConfig) };
             SystemTextJsonSchemaGeneratorSettings systemJsonSettings = new SystemTextJsonSchemaGeneratorSettings
             {
                 SerializerOptions = new JsonSerializerOptions
@@ -58,9 +69,9 @@ namespace JSONSchemaGenerator
 
             JsonSchemaGenerator systemGenerator = new JsonSchemaGenerator(systemJsonSettings);
 
-            foreach (Type type in systemJsonTypes)
+            foreach (Type type in TypesToGenerate)
             {
-                File.WriteAllText($"{outputPath}{type.Name}.schema.json", systemGenerator.Generate(type).ToJson());
+                File.WriteAllText($"{outputPath}/{type.Name}.NJSON.schema.json", systemGenerator.Generate(type).ToJson());
             }
         }
     }
