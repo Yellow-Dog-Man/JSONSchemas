@@ -65,7 +65,7 @@ namespace JSONSchemaGenerator
         {
             JsonSchemaBuilder builder = new();
             schemaGeneratiorConfig.RegisterXmlCommentFile<T>();
-            return builder.FromType<T>(schemaGeneratiorConfig).Schema(Json.Schema.MetaSchemas.DraftNextId)
+            return builder.FromType<T>(schemaGeneratiorConfig).Schema(Json.Schema.MetaSchemas.Draft202012Id)
                 .Build();
         }
     }

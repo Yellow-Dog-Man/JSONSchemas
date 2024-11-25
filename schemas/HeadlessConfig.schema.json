@@ -470,5 +470,5 @@
       "description": "When set to true, will wait for an active Resonite User session before loading this auto-start world."
     }
   },
-  "$schema": "https://json-schema.org/draft/next/schema"
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
 }

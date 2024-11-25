@@ -695,5 +695,5 @@
       "description": "When set to true, will wait for an active Resonite User session before trying this auto-start session"
     }
   },
-  "$schema": "https://json-schema.org/draft/next/schema"
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
 }
